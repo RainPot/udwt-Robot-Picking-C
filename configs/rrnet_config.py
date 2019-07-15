@@ -32,18 +32,18 @@ Config.Train.lr_milestones = [60000, 80000]
 Config.Train.iter_num = 100000
 
 # Transforms
-Config.Train.crop_size = (512, 512)
+Config.Train.crop_size = (384, 384)
 Config.Train.mean = (0.485, 0.456, 0.406)
 Config.Train.std = (0.229, 0.224, 0.225)
 Config.Train.scale_factor = 4
 Config.Train.with_road = True
 Config.Train.transforms = Compose([
-    #MultiScale(scale=(1, 1.15, 1.25, 1.35, 1.5)),
+    MultiScale(scale=(1, 1.15, 1.25, 1.35, 1.5)),
     ToTensor(),
     #MaskIgnore(Config.Train.mean),
     #FillDuck(),
-    #HorizontalFlip(),
-    #RandomCrop(Config.Train.crop_size),
+    HorizontalFlip(),
+    RandomCrop(Config.Train.crop_size),
     Normalize(Config.Train.mean, Config.Train.std),
     ToHeatmap(scale_factor=Config.Train.scale_factor)
 ])

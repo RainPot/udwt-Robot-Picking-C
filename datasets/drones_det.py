@@ -16,8 +16,8 @@ class DronesDET(Dataset):
                 on a sample.
         '''
         # get the csv
-        self.images_dir = os.path.join(root_dir, 'images')
-        self.annotations_dir = os.path.join(root_dir, 'annotations')
+        self.images_dir = os.path.join(root_dir, 'image')
+        self.annotations_dir = os.path.join(root_dir, 'box')
         mdf = os.listdir(self.images_dir)
         restr = r'\w+?(?=(.jpg))'
         for index, mm in enumerate(mdf):
