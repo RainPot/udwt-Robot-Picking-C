@@ -48,15 +48,15 @@ class DronesDET(Dataset):
             W = Xmax - Xmin
             H = Ymax - Ymin
             if clsname == 'echinus':
-                cls = float(0)
-            if clsname == 'starfish':
                 cls = float(1)
-            if clsname == 'scallop':
+            if clsname == 'starfish':
                 cls = float(2)
-            if clsname == 'holothurian':
+            if clsname == 'scallop':
                 cls = float(3)
-            if clsname == 'waterweeds':
+            if clsname == 'holothurian':
                 cls = float(4)
+            if clsname == 'waterweeds':
+                cls = float(5)
             score = float(1)
             single = [Xmin, Ymin, W, H, score, cls]
             annotation.append(single)
