@@ -72,14 +72,11 @@ def roadmap_to_tensor(data):
 def resize(data, scale_factor):
     img = data[0]
     anno = data[1]
-    roadmap = data[2]
     height, width = img.size[1], img.size[0]
     out_height, out_width = int(height*scale_factor), int(width*scale_factor)
-    if roadmap is not None:
-        roadmap = cv2.resize(roadmap, (out_width, out_height), interpolation=cv2.INTER_NEAREST)
     img = img.resize((out_width, out_height), Image.BILINEAR)
     anno[:, :4] = anno[:, :4] * scale_factor
-    return img, anno, roadmap
+    return img, anno
 
 
 def get_img_size(data):

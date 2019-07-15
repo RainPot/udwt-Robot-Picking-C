@@ -26,7 +26,7 @@ class HorizontalFlip(object):
 
 class ToTensor(object):
     def __call__(self, data):
-        return F.img_to_tensor(data[0]), F.annos_to_tensor(data[1]), F.roadmap_to_tensor(data[2])
+        return F.img_to_tensor(data[0]), F.annos_to_tensor(data[1])
 
 
 class Normalize(object):
