@@ -54,7 +54,7 @@ class RandomCrop(object):
         _, overlap = bbox_iou(annos, xywh, x1y1x2y2=False, overlap=True)
         keep_flag = overlap.squeeze() > self.keep_iou
         annos = annos[keep_flag, :]
-        annos = annos.view(-1, 8)
+        annos = annos.view(-1, 6)
         return annos
 
     def __call__(self, data):
