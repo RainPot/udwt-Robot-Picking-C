@@ -7,7 +7,7 @@ from easydict import EasyDict as edict
 Config = edict()
 Config.seed = 219
 Config.dataset = 'drones_det'
-Config.data_root = './data/DronesDET'
+Config.data_root = './data/train_part1'
 Config.log_prefix = 'TwoStageNet'
 Config.use_tensorboard = True
 Config.num_classes = 5
