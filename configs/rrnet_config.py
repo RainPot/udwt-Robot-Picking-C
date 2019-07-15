@@ -10,7 +10,7 @@ Config.dataset = 'drones_det'
 Config.data_root = './data/DronesDET'
 Config.log_prefix = 'TwoStageNet'
 Config.use_tensorboard = True
-Config.num_classes = 10
+Config.num_classes = 5
 
 # Training Config =========================================
 Config.Train = edict()
