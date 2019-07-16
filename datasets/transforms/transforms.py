@@ -148,7 +148,7 @@ class MultiScale(object):
 
     def __call__(self, data):
         rand_idx = random.randint(0, len(self.scale) - 1)
-        return F.resize(data, self.scale[rand_idx])
+        return F.resize(data, 1)
 
 
 class ToHeatmap(object):
