@@ -7,10 +7,10 @@ from easydict import EasyDict as edict
 Config = edict()
 Config.seed = 219
 Config.dataset = 'drones_det'
-Config.data_root = './data/DronesDET'
+Config.data_root = './data/train_part1'
 Config.log_prefix = 'TwoStageNet'
 Config.use_tensorboard = True
-Config.num_classes = 10
+Config.num_classes = 5
 
 # Training Config =========================================
 Config.Train = edict()
@@ -40,10 +40,10 @@ Config.Train.with_road = True
 Config.Train.transforms = Compose([
     MultiScale(scale=(1, 1.15, 1.25, 1.35, 1.5)),
     ToTensor(),
-    MaskIgnore(Config.Train.mean),
-    FillDuck(),
+    #MaskIgnore(Config.Train.mean),
+    #FillDuck(),
     HorizontalFlip(),
-    RandomCrop(Config.Train.crop_size),
+    #RandomCrop(Config.Train.crop_size),
     Normalize(Config.Train.mean, Config.Train.std),
     ToHeatmap(scale_factor=Config.Train.scale_factor)
 ])
