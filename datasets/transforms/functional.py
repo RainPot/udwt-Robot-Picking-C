@@ -80,7 +80,7 @@ def resize(data, scale_factor):
     anno[:, 0] = anno[:, 0] / w_rate
     anno[:, 2] = anno[:, 2] / w_rate
     anno[:, 1] = anno[:, 1] / h_rate
-    anno[:, 3] = anno[:, 3] * h_rate
+    anno[:, 3] = anno[:, 3] / h_rate
     return img, anno
 
 

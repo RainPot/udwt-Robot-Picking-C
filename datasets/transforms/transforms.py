@@ -26,7 +26,7 @@ class HorizontalFlip(object):
 
 class ToTensor(object):
     def __call__(self, data):
-        return F.img_to_tensor(data[0]), F.annos_to_tensor(data[1]), F.roadmap_to_tensor(data[2])
+        return F.img_to_tensor(data[0]), F.annos_to_tensor(data[1])
 
 
 class Normalize(object):
@@ -152,7 +152,7 @@ class MultiScale(object):
 
 
 class ToHeatmap(object):
-    def __init__(self, scale_factor=4, cls_num=10):
+    def __init__(self, scale_factor=4, cls_num=5):
         self.scale_factor = scale_factor
         self.cls_num = cls_num
 
