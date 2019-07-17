@@ -26,7 +26,7 @@ class HorizontalFlip(object):
 
 class ToTensor(object):
     def __call__(self, data):
-        return F.img_to_tensor(data[0]), F.annos_to_tensor(data[1])
+        return F.img_to_tensor(data[0]), F.annos_to_tensor(data[1]), F.roadmap_to_tensor(data[2])
 
 
 class Normalize(object):
@@ -54,7 +54,7 @@ class RandomCrop(object):
         _, overlap = bbox_iou(annos, xywh, x1y1x2y2=False, overlap=True)
         keep_flag = overlap.squeeze() > self.keep_iou
         annos = annos[keep_flag, :]
-        annos = annos.view(-1, 6)
+        annos = annos.view(-1, 8)
         return annos
 
     def __call__(self, data):
@@ -148,11 +148,11 @@ class MultiScale(object):
 
     def __call__(self, data):
         rand_idx = random.randint(0, len(self.scale) - 1)
-        return F.resize(data, 1)
+        return F.resize(data, self.scale[rand_idx])
 
 
 class ToHeatmap(object):
-    def __init__(self, scale_factor=4, cls_num=5):
+    def __init__(self, scale_factor=4, cls_num=10):
         self.scale_factor = scale_factor
         self.cls_num = cls_num
 

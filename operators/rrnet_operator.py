@@ -113,29 +113,17 @@ class RRNetOperator(BaseOperator):
         total_off_loss = 0
         total_s2_reg_loss = 0
 
-        epoch = 0
-        self.training_loader.sampler.set_epoch(epoch)
-        training_loader = iter(self.training_loader)
-
         for step in range(self.cfg.Train.iter_num):
             self.lr_sch.step()
             self.optimizer.zero_grad()
             
             try:
-                imgs, annos, gt_hms, gt_whs, gt_inds, gt_offsets, gt_reg_masks, names = next(training_loader)
-            except StopIteration:
-                epoch += 1
-                self.training_loader.sampler.set_epoch(epoch)
-                training_loader = iter(self.training_loader)
-                imgs, annos, gt_hms, gt_whs, gt_inds, gt_offsets, gt_reg_masks, names = next(training_loader)
-
-            imgs = imgs.cuda(self.cfg.Distributed.gpu_id)
-            annos = annos.cuda(self.cfg.Distributed.gpu_id)
-            gt_hms = gt_hms.cuda(self.cfg.Distributed.gpu_id)
-            gt_whs = gt_whs.cuda(self.cfg.Distributed.gpu_id)
-            gt_inds = gt_inds.cuda(self.cfg.Distributed.gpu_id)
-            gt_offsets = gt_offsets.cuda(self.cfg.Distributed.gpu_id)
-            gt_reg_masks = gt_reg_masks.cuda(self.cfg.Distributed.gpu_id)
+                imgs, annos, gt_hms, gt_whs, gt_inds, gt_offsets, gt_reg_masks, names = self.training_loader.get_batch()
+                targets = gt_hms, gt_whs, gt_inds, gt_offsets, gt_reg_masks, annos
+            except RuntimeError as e:
+                if 'out of memory' in str(e):
+                    print("WARNING: ran out of memory with exception at step {}.".format(step))
+                continue
 
             outs = self.model(imgs)
             targets = gt_hms, gt_whs, gt_inds, gt_offsets, gt_reg_masks, annos
@@ -241,7 +229,6 @@ class RRNetOperator(BaseOperator):
             bbox_for_nms[:, 3] = bbox_for_nms[:, 1] + bbox_for_nms[:, 3]
             keep_bboxs = soft_nms(bbox_for_nms, Nt=0.7, threshold=0.1, method=2)
         keep_bboxs[:, 2:4] -= keep_bboxs[:, 0:2]
-        keep_bboxs = keep_bboxs[keep_bboxs[:, 4]>0.2, :]
         return torch.from_numpy(keep_bboxs)
 
     @staticmethod

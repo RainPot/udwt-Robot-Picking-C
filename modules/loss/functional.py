@@ -37,9 +37,7 @@ def focal_loss_for_hm(pred, gt):
 
     loss = 0
 
-    pred = F.interpolate(pred, size=(pos_inds.size()[2], pos_inds.size()[3]), mode='bilinear', align_corners=True)
     pos_loss = torch.log(pred) * torch.pow(1 - pred, 2) * pos_inds
-
     neg_loss = torch.log(1 - pred) * torch.pow(pred, 2) * neg_weights * neg_inds
 
     num_pos = pos_inds.float().sum()
