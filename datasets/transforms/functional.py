@@ -73,9 +73,14 @@ def resize(data, scale_factor):
     img = data[0]
     anno = data[1]
     height, width = img.size[1], img.size[0]
-    out_height, out_width = int(height*scale_factor), int(width*scale_factor)
-    img = img.resize((out_width, out_height), Image.BILINEAR)
-    anno[:, :4] = anno[:, :4] * scale_factor
+    input_height, input_width = 384, 384
+    h_rate, w_rate = height / input_height, width / input_width
+    # out_height, out_width = int(height*scale_factor), int(width*scale_factor)
+    img = img.resize((input_width, input_height), Image.BILINEAR)
+    anno[:, 0] = anno[:, 0] / w_rate
+    anno[:, 2] = anno[:, 2] / w_rate
+    anno[:, 1] = anno[:, 1] / h_rate
+    anno[:, 3] = anno[:, 3] * h_rate
     return img, anno
 
 
