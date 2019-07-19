@@ -164,6 +164,7 @@ class RRNetOperator(BaseOperator):
                     img = (denormalize(imgs[0].cpu()).permute(1, 2, 0).cpu().numpy() * 255).astype(np.uint8)
                     # Do nms
                     s2_pred_bbox = self._ext_nms(s2_pred_bbox)
+
                     #
                     s1_pred_on_img = visualize(img.copy(), s1_pred_bbox, xywh=True, with_score=True)
                     s2_pred_on_img = visualize(img.copy(), s2_pred_bbox, xywh=True, with_score=True)
@@ -229,6 +230,7 @@ class RRNetOperator(BaseOperator):
             bbox_for_nms[:, 3] = bbox_for_nms[:, 1] + bbox_for_nms[:, 3]
             keep_bboxs = soft_nms(bbox_for_nms, Nt=0.7, threshold=0.1, method=2)
         keep_bboxs[:, 2:4] -= keep_bboxs[:, 0:2]
+        keep_bboxs = keep_bboxs[keep_bboxs[:, 4]>0.3]
         return torch.from_numpy(keep_bboxs)
 
     @staticmethod

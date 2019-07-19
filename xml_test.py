@@ -10,10 +10,10 @@ scallop = 0
 holothurian = 0
 waterweeds = 0
 
-for sample in os.listdir('F:/dataset/UnderWaterDetection[UPRC2018]/test/box/'):
+for sample in os.listdir('F:/dataset/train_part1/box/'):
 
-    xml_file = 'F:/dataset/UnderWaterDetection[UPRC2018]/test/box/' + sample
-    txt_file = open('F:/dataset/UnderWaterDetection[UPRC2018]/test/annotations/' + sample[:-4] + '.txt', 'w')
+    xml_file = 'F:/dataset/train_part1/box/' + sample
+    txt_file = open('F:/dataset/train_part1/annotations/' + sample[:-4] + '.txt', 'w')
     try:
         tree = ET.parse(xml_file)
         root = tree.getroot()

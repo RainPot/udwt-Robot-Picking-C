@@ -7,7 +7,7 @@ from easydict import EasyDict as edict
 Config = edict()
 Config.seed = 219
 Config.dataset = 'drones_det'
-Config.data_root = './data/train_part1'
+Config.data_root = './data/undertotal'
 Config.log_prefix = 'TwoStageNet'
 Config.use_tensorboard = True
 Config.num_classes = 5
@@ -88,4 +88,4 @@ Config.Distributed.world_size = 1
 Config.Distributed.gpu_id = -1
 Config.Distributed.rank = 0
 Config.Distributed.ngpus_per_node = 1
-Config.Distributed.dist_url = 'tcp://127.0.0.1:34564'
+Config.Distributed.dist_url = 'tcp://127.0.0.1:34569'
