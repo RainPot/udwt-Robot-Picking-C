@@ -24,7 +24,7 @@ class RRNetOperator(BaseOperator):
         self.cfg = cfg
 
         model = RRNet(cfg).cuda(cfg.Distributed.gpu_id)
-        model = nn.SyncBatchNorm.convert_sync_batchnorm(model)
+        #model = nn.SyncBatchNorm.convert_sync_batchnorm(model)
 
         self.optimizer = optim.Adam(model.parameters(), lr=cfg.Train.lr)
 
