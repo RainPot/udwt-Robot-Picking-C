@@ -214,14 +214,14 @@ def splitdata():
 
 
 def remove_empty_file():
-    name1 = os.listdir('F:/dataset/undertotal/val3/annotations')
-    for name in os.listdir('F:/dataset/undertotal/val3/images'):
-        F=open('F:/dataset/undertotal/val3/annotations/'+name)
+    name1 = os.listdir('F:/dataset/UNDERALL/2018origin/train/annotations')
+    for name in os.listdir('F:/dataset/UNDERALL/2018origin/train/annotations'):
+        F=open('F:/dataset/UNDERALL/2018origin/train/annotations/'+name)
         if F.readline() == '':
             print(name)
             F.close()
-            os.remove('F:/dataset/undertotal/val3/annotations/'+name)
-            os.remove('F:/dataset/undertotal/val3/images/'+name[:-4]+'.jpg')
+            os.remove('F:/dataset/UNDERALL/2018origin/train/annotations/'+name)
+            os.remove('F:/dataset/UNDERALL/2018origin/train/images/'+name[:-4]+'.jpg')
         print(name[:-4]+'.txt')
     print(name1)
 
@@ -235,13 +235,51 @@ def changeyolov3toRRnet():
             F2.write('{},{},{},{},{},{},{},{}\n'.format(line.split(' ')[1], line.split(' ')[2], int(line.split(' ')[3]) - int(line.split(' ')[1]), int(line.strip('\n').split(' ')[4]) - int(line.split(' ')[2]), 1, line.split(' ')[0], 0, 0))
             # print('{},{},{},{},{},{},{},{}\n'.format(line.split(' ')[1], line.split(' ')[2], line.split(' ')[3], line.strip('\n').split(' ')[4], 1, line.split(' ')[0], 0, 0))
 
+def change_cls():
+    for val_label in os.listdir('F:/dataset/UNDERALL/2018origin/val/annotations'):
+        F1 = open('F:/dataset/UNDERALL/2018origin/val/annotations/' + val_label, 'r')
+        F2 = open('F:/dataset/UNDERALL/2018origin/val/annotations_change/' + val_label, 'w')
+        for line in F1.readlines():
+            if int(line.split(',')[5]) == 1:
+                F2.write('{},{},{},{},{},{},{},{}\n'.format(line.split(',')[0], line.split(',')[1], line.split(',')[2], line.split(',')[3], line.split(',')[4], 2, 0, 0))
+            if int(line.split(',')[5]) == 3:
+                F2.write('{},{},{},{},{},{},{},{}\n'.format(line.split(',')[0], line.split(',')[1], line.split(',')[2], line.split(',')[3], line.split(',')[4], 3, 0, 0))
+            if int(line.split(',')[5]) == 4:
+                F2.write('{},{},{},{},{},{},{},{}\n'.format(line.split(',')[0], line.split(',')[1], line.split(',')[2], line.split(',')[3], line.split(',')[4], 1, 0, 0))
+            if int(line.split(',')[5]) == 2:
+                F2.write('{},{},{},{},{},{},{},{}\n'.format(line.split(',')[0], line.split(',')[1], line.split(',')[2], line.split(',')[3], line.split(',')[4], 4, 0, 0))
+            else:
+                continue
+
+
+def img2video():
+    fps = 15  # 视频帧率
+    fourcc = cv2.VideoWriter_fourcc('M', 'J', 'P', 'G')
+    videoWriter = cv2.VideoWriter('F:/models/VisDronevideo/video7.avi', fourcc, fps, (2720, 1530))  # (1360,480)为视频大小
+    for i in os.listdir('F:/models/VisDronevideo/video7/'):
+        img12 = cv2.imread('F:/models/VisDronevideo/video7/' + i)
+        #    cv2.imshow('img', img12)
+        #    cv2.waitKey(1000/int(fps))
+        videoWriter.write(img12)
+    videoWriter.release()
+
+def mvfile():
+    i = 0
+    for videoname in os.listdir('F:/dataset/zhangzidao/val/image'):
+        for index in os.listdir('F:/dataset/zhangzidao/val/image/' + videoname):
+            for filename in os.listdir('F:/dataset/zhangzidao/val/image/' + videoname + '/' + index):
+                print('F:/dataset/zhangzidao/val/image/' + videoname + '/' + index + '/' + filename)
+                shutil.copy('F:/dataset/zhangzidao/val/image/' + videoname + '/' + index + '/' + filename,
+                            'F:/dataset/zhangzidaonew/val/images')
+                i += 1
+    print(i)
 
 
 if __name__ == '__main__':
     # convert xml to json
 
-    convertor = Convertor('F:/dataset/UNDERALL/2018origin/', 'F:/dataset/UNDERALL/2018origin/')
-    convertor.start()
+    # convertor = Convertor('F:/dataset/UNDERALL/2018origin/', 'F:/dataset/UNDERALL/2018origin/')
+    # convertor.start()
 
     # convert xml to txt
 
@@ -253,3 +291,6 @@ if __name__ == '__main__':
 
     # changeyolov3toRRnet()
 
+    # change_cls()
+
+    remove_empty_file()

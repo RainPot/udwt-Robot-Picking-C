@@ -7,10 +7,10 @@ from easydict import EasyDict as edict
 Config = edict()
 Config.seed = 219
 Config.dataset = 'drones_det'
-Config.data_root = './data/undertotal'
+Config.data_root = './data/2018origin'
 Config.log_prefix = 'TwoStageNet'
 Config.use_tensorboard = True
-Config.num_classes = 5
+Config.num_classes = 4
 
 # Training Config =========================================
 Config.Train = edict()

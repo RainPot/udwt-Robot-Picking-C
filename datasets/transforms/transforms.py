@@ -152,7 +152,7 @@ class MultiScale(object):
 
 
 class ToHeatmap(object):
-    def __init__(self, scale_factor=4, cls_num=5):
+    def __init__(self, scale_factor=4, cls_num=4):
         self.scale_factor = scale_factor
         self.cls_num = cls_num
 
