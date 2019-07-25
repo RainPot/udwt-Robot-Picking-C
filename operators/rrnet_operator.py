@@ -17,6 +17,7 @@ from utils.vis.annotations import visualize
 from ext.nms.nms_wrapper import soft_nms
 from utils.warmup_lr import WarmupMultiStepLR
 from modules.loss.functional import giou_loss
+from PIL import Image
 
 
 class RRNetOperator(BaseOperator):
@@ -259,13 +260,21 @@ class RRNetOperator(BaseOperator):
                 imgs = imgs.cuda()
                 for scale in self.cfg.Val.scales:
                     img = imgs
+                    height, width = img.size()[2], img.size()[3]
+                    input_height, input_width = 512, 512
+                    h_rate, w_rate = height / input_height, width / input_width
+                    img = F.interpolate(img, (input_width, input_height), mode='bilinear', align_corners=True)
                     img = F.interpolate(img, scale_factor=scale, mode='bilinear', align_corners=True)
                     outs = self.model(img)
                     _, pred_bbox = self.generate_bbox(outs)
                     if not self.cfg.Val.auto_test:
-                        pred_bbox = pred_bbox[pred_bbox[:, 4]>0.01]
+                        pred_bbox = pred_bbox[pred_bbox[:, 4]>0.3]
                     pred_bbox = pred_bbox.cpu()
                     pred_bbox[:, :4] = pred_bbox[:, :4] / scale
+                    pred_bbox[:, 0] = pred_bbox[:, 0] * w_rate
+                    pred_bbox[:, 2] = pred_bbox[:, 2] * w_rate
+                    pred_bbox[:, 1] = pred_bbox[:, 1] * h_rate
+                    pred_bbox[:, 3] = pred_bbox[:, 3] * h_rate
                     multi_scale_bboxes.append(pred_bbox)
 
                 pred_bbox = torch.cat(multi_scale_bboxes, dim=0)

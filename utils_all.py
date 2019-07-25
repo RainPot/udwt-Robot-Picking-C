@@ -214,15 +214,15 @@ def splitdata():
 
 
 def remove_empty_file():
-    name1 = os.listdir('F:/dataset/UNDERALL/2018origin/train/annotations')
-    for name in os.listdir('F:/dataset/UNDERALL/2018origin/train/annotations'):
-        F=open('F:/dataset/UNDERALL/2018origin/train/annotations/'+name)
+    name1 = os.listdir('F:/dataset/UNDERALL/2018origin/val/annotations')
+    for name in os.listdir('F:/dataset/UNDERALL/2018origin/val/annotations'):
+        F=open('F:/dataset/UNDERALL/2018origin/val/annotations/'+name)
         if F.readline() == '':
             print(name)
             F.close()
-            os.remove('F:/dataset/UNDERALL/2018origin/train/annotations/'+name)
-            os.remove('F:/dataset/UNDERALL/2018origin/train/images/'+name[:-4]+'.jpg')
-        print(name[:-4]+'.txt')
+            # os.remove('F:/dataset/UNDERALL/2018origin/train/annotations/'+name)
+            # os.remove('F:/dataset/UNDERALL/2018origin/train/images/'+name[:-4]+'.jpg')
+        # print(name[:-4]+'.txt')
     print(name1)
 
 

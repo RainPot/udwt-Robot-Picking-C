@@ -1,6 +1,7 @@
 import cv2
 import matplotlib.cm
 import torch
+import os
 
 CLASS_NAMES = ("ign", "ped", "peo", "byc", "car", "van", "trk", "tcy", "atc", "bus", "mtr", "oth")
 
@@ -51,9 +52,9 @@ def load_colors(num=12):
 
 
 if __name__ == '__main__':
-    dev_img = cv2.imread('../../data/test/images/9999936_00000_d_0000070.jpg')
-    with open('../../../40000/9999936_00000_d_0000070.txt', 'r') as reader:
-        dev_annos = reader.readlines()
-    marked_img = visualize(dev_img, dev_annos)
-    cv2.imwrite('../../../vis_demo.jpg', marked_img)
-    cv2.waitKey(0)
+    for name in os.listdir('../../results/'):
+        dev_img = cv2.imread('../../data/2018origin/val/images/' + name[:-4] + '.jpg')
+        with open('../../results/' + name, 'r') as reader:
+            dev_annos = reader.readlines()
+        marked_img = visualize(dev_img, dev_annos)
+        cv2.imwrite('../../resultsimages/' + name[:-4] + '.jpg', marked_img)
