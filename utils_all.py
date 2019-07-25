@@ -275,6 +275,52 @@ def mvfile():
     print(i)
 
 
+def RRtxtresults2matlab(txt_path, out_path):
+
+
+    label = []
+    for txt_name in os.listdir(txt_path):
+        id_file = open('F:/dataset/UNDERALL/UnderWaterDetection[UPRC2018]/test/test_list.txt')
+        for line in id_file.readlines():
+            if line.split(' ')[0] == txt_name[:-4]:
+                img_id = line.strip().split(' ')[1]
+        print(img_id)
+        id_file.close()
+        F = open(txt_path+txt_name, 'r')
+        for line in F.readlines():
+            matlab_format = [int(img_id), line.split(',')[5], line.split(',')[4], line.split(',')[0], line.split(',')[1],
+                             float(line.split(',')[0])+float(line.split(',')[2]), float(line.split(',')[1])+float(line.split(',')[3])]
+            label.append(matlab_format)
+    np.sort(label, 0)
+    matlab = open(out_path+'final.txt', 'w')
+    for i in label:
+        matlab.write('{} {} {} {} {} {} {}\n'.format(i[0], i[1], i[2], i[3], i[4], i[5], i[6]))
+
+
+def mmtxtresults2matlab(txt_path, out_path):
+
+
+    label = []
+    for i in range(0, 2901):
+        # id_file = open('F:/dataset/UNDERALL/UnderWaterDetection[UPRC2018]/test/test_list.txt')
+        # for line in id_file.readlines():
+        #     if line.split(' ')[0] == txt_name[:-4]:
+        #         img_id = line.strip().split(' ')[1]
+        img_id = i + 1
+        print(img_id)
+        # id_file.close()
+        F = open(txt_path+str(i)+'.txt', 'r')
+        for line in F.readlines():
+            matlab_format = [int(img_id), line.split(',')[5], line.split(',')[4], line.split(',')[0], line.split(',')[1],
+                             float(line.split(',')[0])+float(line.split(',')[2]), float(line.split(',')[1])+float(line.split(',')[3])]
+            label.append(matlab_format)
+    # np.sort(label, 0)
+    matlab = open(out_path+'final.txt', 'w')
+    for i in label:
+        matlab.write('{} {} {} {} {} {} {}\n'.format(i[0], i[1], i[2], i[3], i[4], i[5], i[6]))
+
+
+
 if __name__ == '__main__':
     # convert xml to json
 
@@ -293,4 +339,5 @@ if __name__ == '__main__':
 
     # change_cls()
 
-    remove_empty_file()
+    # remove_empty_file()
+    mmtxtresults2matlab('F:/dataset/UNDERALL/UnderWaterDetection[UPRC2018]/devkit/txtresults/', 'F:/dataset/UNDERALL/UnderWaterDetection[UPRC2018]/devkit/')
