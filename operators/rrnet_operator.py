@@ -268,13 +268,13 @@ class RRNetOperator(BaseOperator):
                     outs = self.model(img)
                     _, pred_bbox = self.generate_bbox(outs)
                     if not self.cfg.Val.auto_test:
-                        pred_bbox = pred_bbox[pred_bbox[:, 4]>0.3]
+                        pred_bbox = pred_bbox[pred_bbox[:, 4]>0.05]
                     pred_bbox = pred_bbox.cpu()
                     pred_bbox[:, :4] = pred_bbox[:, :4] / scale
-                    pred_bbox[:, 0] = pred_bbox[:, 0] * w_rate
-                    pred_bbox[:, 2] = pred_bbox[:, 2] * w_rate
-                    pred_bbox[:, 1] = pred_bbox[:, 1] * h_rate
-                    pred_bbox[:, 3] = pred_bbox[:, 3] * h_rate
+                    pred_bbox[:, 0] = pred_bbox[:, 0] * w_rate + 1
+                    pred_bbox[:, 2] = pred_bbox[:, 2] * w_rate + 1
+                    pred_bbox[:, 1] = pred_bbox[:, 1] * h_rate + 1
+                    pred_bbox[:, 3] = pred_bbox[:, 3] * h_rate + 1
                     multi_scale_bboxes.append(pred_bbox)
 
                 pred_bbox = torch.cat(multi_scale_bboxes, dim=0)

@@ -227,7 +227,10 @@ def evaluate_results(pred_dir, target_dir, thresholds=torch.arange(0.5, 1.0, 0.0
     cls_tp_confs = [torch.zeros(0) for _ in range(1, cls_num)]
 
     for name in pred_list:
-        pred = pd.read_csv(os.path.join(pred_dir, "{}.txt".format(name)), header=None, float_precision='high')
+        try:
+            pred = pd.read_csv(os.path.join(pred_dir, "{}.txt".format(name)), header=None, float_precision='high')
+        except:
+            continue
         target = pd.read_csv(os.path.join(target_dir, "{}.txt".format(name)), header=None, float_precision='high')
         pred = np.array(pred)
         pred[:, 2:4] += pred[:, 0:2]

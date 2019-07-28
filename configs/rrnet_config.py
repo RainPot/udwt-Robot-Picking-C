@@ -38,12 +38,12 @@ Config.Train.std = (0.229, 0.224, 0.225)
 Config.Train.scale_factor = 4
 Config.Train.with_road = True
 Config.Train.transforms = Compose([
-    MultiScale(scale=(1, 1.15, 1.25, 1.35, 1.5)),
+    MultiScale(scale=(0.8, 0.9, 1, 1.1, 1.2)),
     ToTensor(),
     #MaskIgnore(Config.Train.mean),
     #FillDuck(),
     HorizontalFlip(),
-    #RandomCrop(Config.Train.crop_size),
+    RandomCrop(Config.Train.crop_size),
     Normalize(Config.Train.mean, Config.Train.std),
     ToHeatmap(scale_factor=Config.Train.scale_factor)
 ])
@@ -55,7 +55,7 @@ Config.Train.checkpoint_interval = 5000
 
 # Validation Config =========================================
 Config.Val = edict()
-Config.Val.model_path = './log/{}/ckp-89999.pth'.format(Config.log_prefix)
+Config.Val.model_path = './log/{}/ckp-99999.pth'.format(Config.log_prefix)
 Config.Val.is_eval = True
 Config.Val.auto_test = False
 # Dataloader params.
@@ -66,7 +66,7 @@ Config.Val.sampler = DistributedSampler
 # Transforms
 Config.Val.mean = (0.485, 0.456, 0.406)
 Config.Val.std = (0.229, 0.224, 0.225)
-Config.Val.scales = [1, 1.1, 1.2, 1.3, 1.4, 1.5]
+Config.Val.scales = [0.8, 0.9, 1, 1.1, 1.2, 1.3]
 Config.Val.transforms = Compose([
     ToTensor(),
     Normalize(Config.Val.mean, Config.Val.std)

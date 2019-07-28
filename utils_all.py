@@ -15,7 +15,7 @@ class Convertor(object):
         self.source = source
         self.target = target
 
-        self.splits = ['val']
+        self.splits = ['new_val']
         # self.splits = ['train', 'val', 'test']
         if source == 'drones' and target == 'coco':
             self.start = self.under2coco
@@ -143,10 +143,10 @@ def xml2txt():
     scallop = 0
     holothurian = 0
     waterweeds = 0
-    for sample in os.listdir('F:/dataset/train_part1/box/'):
+    for sample in os.listdir('F:/dataset/UNDERALL/new_val/box/'):
 
-        xml_file = 'F:/dataset/train_part1/box/' + sample
-        txt_file = open('F:/dataset/train_part1/annotations/' + sample[:-4] + '.txt', 'w')
+        xml_file = 'F:/dataset/UNDERALL/new_val/box/' + sample
+        txt_file = open('F:/dataset/UNDERALL/new_val/annotations/' + sample[:-4] + '.txt', 'w')
         try:
             tree = ET.parse(xml_file)
             root = tree.getroot()
@@ -161,20 +161,19 @@ def xml2txt():
                 w = Xmax - Xmin
                 h = Ymax - Ymin
                 if cls == 'echinus' or cls == 'seaurchin':
-                    cls = int(1)
+                    cls = int(2)
                     echinus += 1
                 if cls == 'starfish':
-                    cls = int(2)
+                    cls = int(4)
                     starfish += 1
                 if cls == 'scallop':
                     cls = int(3)
                     scallop += 1
                 if cls == 'holothurian' or cls == 'seacucumber':
-                    cls = int(4)
+                    cls = int(1)
                     holothurian += 1
                 if cls == 'waterweeds':
-                    cls = int(5)
-                    waterweeds += 1
+                    continue
 
                 txt_file.write('{},{},{},{},{},{},1,1\n'.format(Xmin, Ymin, w, h, 1, cls))
                 # print('cls:{}, Xmin:{}, Ymin:{}, Xmax:{}, Ymax:{}'.format(cls, Xmin, Ymin, Xmax, Ymax))
@@ -214,14 +213,14 @@ def splitdata():
 
 
 def remove_empty_file():
-    name1 = os.listdir('F:/dataset/UNDERALL/2018origin/val/annotations')
-    for name in os.listdir('F:/dataset/UNDERALL/2018origin/val/annotations'):
-        F=open('F:/dataset/UNDERALL/2018origin/val/annotations/'+name)
+    name1 = os.listdir('F:/dataset/UNDERALL/2018origin/new_val/annotations/')
+    for name in os.listdir('F:/dataset/UNDERALL/2018origin/new_val/annotations/'):
+        F=open('F:/dataset/UNDERALL/2018origin/new_val/annotations/'+name)
         if F.readline() == '':
             print(name)
             F.close()
-            # os.remove('F:/dataset/UNDERALL/2018origin/train/annotations/'+name)
-            # os.remove('F:/dataset/UNDERALL/2018origin/train/images/'+name[:-4]+'.jpg')
+            os.remove('F:/dataset/UNDERALL/2018origin/new_val/annotations/'+name)
+            os.remove('F:/dataset/UNDERALL/2018origin/new_val/images/'+name[:-4]+'.jpg')
         # print(name[:-4]+'.txt')
     print(name1)
 
@@ -319,13 +318,22 @@ def mmtxtresults2matlab(txt_path, out_path):
     for i in label:
         matlab.write('{} {} {} {} {} {} {}\n'.format(i[0], i[1], i[2], i[3], i[4], i[5], i[6]))
 
+def split_repeat(new_path, old_path):
+    old_name = os.listdir(old_path)
+    for new_single_name in os.listdir(new_path):
+        if new_single_name not in old_name:
+            shutil.copy(new_path + new_single_name, 'F:/dataset/UNDERALL/new_val/box/')
+
+
+
+
 
 
 if __name__ == '__main__':
     # convert xml to json
 
-    # convertor = Convertor('F:/dataset/UNDERALL/2018origin/', 'F:/dataset/UNDERALL/2018origin/')
-    # convertor.start()
+    convertor = Convertor('F:/dataset/UNDERALL/2018origin/', 'F:/dataset/UNDERALL/2018origin/')
+    convertor.start()
 
     # convert xml to txt
 
@@ -340,4 +348,6 @@ if __name__ == '__main__':
     # change_cls()
 
     # remove_empty_file()
-    mmtxtresults2matlab('F:/dataset/UNDERALL/UnderWaterDetection[UPRC2018]/devkit/txtresults/', 'F:/dataset/UNDERALL/UnderWaterDetection[UPRC2018]/devkit/')
+    # mmtxtresults2matlab('F:/dataset/UNDERALL/UnderWaterDetection[UPRC2018]/devkit/txtresults/', 'F:/dataset/UNDERALL/UnderWaterDetection[UPRC2018]/devkit/')
+
+    # split_repeat('F:/dataset/UNDERALL/train_part1/box/', 'F:/dataset/UNDERALL/UnderWaterDetection[UPRC2018]/test/box/')
