@@ -15,7 +15,7 @@ class Convertor(object):
         self.source = source
         self.target = target
 
-        self.splits = ['new_val']
+        self.splits = ['train_2019']
         # self.splits = ['train', 'val', 'test']
         if source == 'drones' and target == 'coco':
             self.start = self.under2coco
@@ -212,17 +212,15 @@ def splitdata():
         shutil.copy('F:/dataset/oyster/labels/' + train_name[:-4] + '.xml', 'F:/dataset/oyster/train/annotations/')
 
 
-def remove_empty_file():
-    name1 = os.listdir('F:/dataset/UNDERALL/2018origin/new_val/annotations/')
-    for name in os.listdir('F:/dataset/UNDERALL/2018origin/new_val/annotations/'):
-        F=open('F:/dataset/UNDERALL/2018origin/new_val/annotations/'+name)
+def remove_empty_file(path):
+    for name in os.listdir(path):
+        F=open(path + name)
         if F.readline() == '':
             print(name)
             F.close()
-            os.remove('F:/dataset/UNDERALL/2018origin/new_val/annotations/'+name)
-            os.remove('F:/dataset/UNDERALL/2018origin/new_val/images/'+name[:-4]+'.jpg')
+            os.remove(path + name)
+            os.remove('F:/dataset/UNDERALL/YOLOV3/images/'+name[:-4]+'.jpg')
         # print(name[:-4]+'.txt')
-    print(name1)
 
 
 
@@ -235,9 +233,9 @@ def changeyolov3toRRnet():
             # print('{},{},{},{},{},{},{},{}\n'.format(line.split(' ')[1], line.split(' ')[2], line.split(' ')[3], line.strip('\n').split(' ')[4], 1, line.split(' ')[0], 0, 0))
 
 def change_cls():
-    for val_label in os.listdir('F:/dataset/UNDERALL/2018origin/val/annotations'):
-        F1 = open('F:/dataset/UNDERALL/2018origin/val/annotations/' + val_label, 'r')
-        F2 = open('F:/dataset/UNDERALL/2018origin/val/annotations_change/' + val_label, 'w')
+    for val_label in os.listdir('F:/dataset/UNDERALL/train_part1/annotations/'):
+        F1 = open('F:/dataset/UNDERALL/train_part1/annotations/' + val_label, 'r')
+        F2 = open('F:/dataset/UNDERALL/train_part1/annotations_change/' + val_label, 'w')
         for line in F1.readlines():
             if int(line.split(',')[5]) == 1:
                 F2.write('{},{},{},{},{},{},{},{}\n'.format(line.split(',')[0], line.split(',')[1], line.split(',')[2], line.split(',')[3], line.split(',')[4], 2, 0, 0))
@@ -322,18 +320,20 @@ def split_repeat(new_path, old_path):
     old_name = os.listdir(old_path)
     for new_single_name in os.listdir(new_path):
         if new_single_name not in old_name:
-            shutil.copy(new_path + new_single_name, 'F:/dataset/UNDERALL/new_val/box/')
+            shutil.copy(new_path + new_single_name, 'F:/dataset/UNDERALL/2018origin/train_2019/annotations/')
 
 
-
-
+def YOLOV3newtxt(path):
+    # old_train = open(path + 'train.txt', 'r')
+    # new_train =
+    return 0
 
 
 if __name__ == '__main__':
     # convert xml to json
 
-    convertor = Convertor('F:/dataset/UNDERALL/2018origin/', 'F:/dataset/UNDERALL/2018origin/')
-    convertor.start()
+    # convertor = Convertor('F:/dataset/UNDERALL/2018origin/', 'F:/dataset/UNDERALL/2018origin/')
+    # convertor.start()
 
     # convert xml to txt
 
@@ -345,9 +345,9 @@ if __name__ == '__main__':
 
     # changeyolov3toRRnet()
 
-    # change_cls()
+    change_cls()
 
-    # remove_empty_file()
+    # remove_empty_file('F:/dataset/UNDERALL/YOLOV3/labels/')
     # mmtxtresults2matlab('F:/dataset/UNDERALL/UnderWaterDetection[UPRC2018]/devkit/txtresults/', 'F:/dataset/UNDERALL/UnderWaterDetection[UPRC2018]/devkit/')
 
-    # split_repeat('F:/dataset/UNDERALL/train_part1/box/', 'F:/dataset/UNDERALL/UnderWaterDetection[UPRC2018]/test/box/')
+    # split_repeat('F:/dataset/UNDERALL/train_part1/annotations/', 'F:/dataset/UNDERALL/2018origin/new_val/annotations/')

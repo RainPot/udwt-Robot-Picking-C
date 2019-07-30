@@ -261,7 +261,7 @@ class RRNetOperator(BaseOperator):
                 for scale in self.cfg.Val.scales:
                     img = imgs
                     height, width = img.size()[2], img.size()[3]
-                    input_height, input_width = 512, 512
+                    input_height, input_width = 768, 768
                     h_rate, w_rate = height / input_height, width / input_width
                     img = F.interpolate(img, (input_width, input_height), mode='bilinear', align_corners=True)
                     img = F.interpolate(img, scale_factor=scale, mode='bilinear', align_corners=True)

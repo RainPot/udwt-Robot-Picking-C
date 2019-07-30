@@ -11,7 +11,7 @@ def make_dataloader(cfg, collate_fn=None):
     if cfg.dataset not in datasets:
         raise NotImplementedError
 
-    train_dataset = datasets[cfg.dataset](root_dir=cfg.data_root, transforms=cfg.Train.transforms, split='train')
+    train_dataset = datasets[cfg.dataset](root_dir=cfg.data_root, transforms=cfg.Train.transforms, split='train_2019')
     val_dataset = datasets[cfg.dataset](root_dir=cfg.data_root, transforms=cfg.Val.transforms, split='new_val')
 
     if collate_fn is 'ctnet':
