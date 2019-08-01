@@ -39,6 +39,15 @@ class Normalize(object):
         return F.normalize(data[0], self.mean, self.std), data[1]
 
 
+class cropsingle(object):
+    def __init__(self, size=256, mode='train_2019'):
+        self.size = size
+        self.mode = mode
+
+    def __call__(self, data):
+        return F.crop_single(data, self.size, self.mode)
+
+
 class RandomCrop(object):
     def __init__(self, size, keep_iou=0.5):
         self.h, self.w = size

@@ -6,7 +6,7 @@ import os
 CLASS_NAMES = ("ign", "ped", "peo", "byc", "car", "van", "trk", "tcy", "atc", "bus", "mtr", "oth")
 
 
-def visualize(img, annos, classnames=CLASS_NAMES, with_score=False, xywh=True):
+def visualize(img, annos, classnames=CLASS_NAMES, with_score=True, xywh=True):
     """
     Mark annotation bounding box on the image.
     :param img: cv2 image
@@ -52,9 +52,15 @@ def load_colors(num=12):
 
 
 if __name__ == '__main__':
-    for name in os.listdir('../../results/'):
-        dev_img = cv2.imread('../../data/2018origin/val/images/' + name[:-4] + '.jpg')
-        with open('../../results/' + name, 'r') as reader:
-            dev_annos = reader.readlines()
-        marked_img = visualize(dev_img, dev_annos)
-        cv2.imwrite('../../resultsimages/' + name[:-4] + '.jpg', marked_img)
+    # for name in os.listdir('../../results/'):
+    #     dev_img = cv2.imread('../../data/2018origin/val/images/' + name[:-4] + '.jpg')
+    #     with open('../../results/' + name, 'r') as reader:
+    #         dev_annos = reader.readlines()
+    #     marked_img = visualize(dev_img, dev_annos)
+    #     cv2.imwrite('../../resultsimages/' + name[:-4] + '.jpg', marked_img)
+
+    dev_img = cv2.imread('F:/dataset/DroneDET/DronesDET2018/test/images/9999939_00000_d_0000158' + '.jpg')
+    with open('F:/models/VisDrone2019/11111/round/' + '9999939_00000_d_0000158.txt', 'r') as reader:
+        dev_annos = reader.readlines()
+    marked_img = visualize(dev_img, dev_annos)
+    cv2.imwrite('F:/dataset/DroneDET/' + '9999939_00000_d_0000158' + '.jpg', marked_img)

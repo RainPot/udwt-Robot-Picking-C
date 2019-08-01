@@ -28,6 +28,32 @@ def flip_annos(data, w):
     data[:, 0] = w - data[:, 0] - data[:, 2]
     return data
 
+def crop_single(data, size, mode):
+    w, h = data[0].size[0], data[0].size[1]
+    anno = data[1]
+    label_num = anno.shape[0]
+    if mode == 'train_2019':
+        index = random.randint(0, label_num)
+    elif mode == 'new_val':
+        index = 0
+    else:
+        print('crop_single error!!!!!!!!!!!!!!')
+    label = anno[index-1, :]
+    cls, X, Y, W, H = int(label[5]), float(label[0]), float(label[1]), float(label[2]), float(label[3])
+    crop_Xmin, crop_Ymin, crop_Xmax, crop_Ymax = X-50, Y-50, X+W+50, Y+H+50
+    if crop_Xmax >= w:
+        crop_Xmax = w-1
+    if crop_Ymax >= h:
+        crop_Ymax = h-1
+
+    cropped_image = data[0].crop((crop_Xmin, crop_Ymin, crop_Xmax, crop_Ymax))
+    cropped_image = cropped_image.resize((int(size), int(size)), Image.BILINEAR)
+
+    groundtruth = np.array([cls])
+    # groundtruth[cls] = 1
+
+    return cropped_image, groundtruth
+
 
 def img_to_tensor(data):
     """

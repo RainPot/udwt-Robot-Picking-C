@@ -219,7 +219,7 @@ def remove_empty_file(path):
             print(name)
             F.close()
             os.remove(path + name)
-            os.remove('F:/dataset/UNDERALL/YOLOV3/images/'+name[:-4]+'.jpg')
+            os.remove('F:/dataset/UNDERALL/2018origin/train_2019/images/'+name[:-4]+'.jpg')
         # print(name[:-4]+'.txt')
 
 
@@ -345,9 +345,9 @@ if __name__ == '__main__':
 
     # changeyolov3toRRnet()
 
-    change_cls()
+    # change_cls()
 
-    # remove_empty_file('F:/dataset/UNDERALL/YOLOV3/labels/')
+    remove_empty_file('F:/dataset/UNDERALL/2018origin/train_2019/annotations/')
     # mmtxtresults2matlab('F:/dataset/UNDERALL/UnderWaterDetection[UPRC2018]/devkit/txtresults/', 'F:/dataset/UNDERALL/UnderWaterDetection[UPRC2018]/devkit/')
 
     # split_repeat('F:/dataset/UNDERALL/train_part1/annotations/', 'F:/dataset/UNDERALL/2018origin/new_val/annotations/')
