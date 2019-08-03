@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 from datasets.classifier import classifier
 from torch.utils.data import DataLoader
-from backbones.hourglass_UNDER import hourglass_net
+from backbones.hourglass_UNDER_flip import hourglass_net
 
 
 MAX_ITER = 50000
@@ -22,7 +22,7 @@ def train():
     train_loader = iter(train_data)
 
     total_loss = 0
-    for step in range(0, MAX_ITER):
+    for step in range(1, MAX_ITER+1):
         try:
             data = next(train_loader)
         except:
@@ -68,10 +68,13 @@ def train():
                 step_eval += 1
 
             avg_loss = total_loss / step_eval
-            avg_acc = correct / step_eval
+            avg_acc = correct / (step_eval * 8)
             print('VAL avg_loss:{}, avg_acc:{}'.format(avg_loss, avg_acc))
             net.train()
-    torch.save(net.state_dict(), './hourglass_UNDER.pth')
+
+        if step % 3000 == 0:
+            torch.save(net.state_dict(), './hourglass_UNDER_{}.pth'.format(step))
+    # torch.save(net.state_dict(), './hourglass_UNDER.pth')
     print('done!!')
 
 

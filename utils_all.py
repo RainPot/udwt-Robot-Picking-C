@@ -143,50 +143,50 @@ def xml2txt():
     scallop = 0
     holothurian = 0
     waterweeds = 0
-    for sample in os.listdir('F:/dataset/UNDERALL/new_val/box/'):
+    for sample in os.listdir('F:/dataset/UNDERALL/split/annotations/2017/'):
 
-        xml_file = 'F:/dataset/UNDERALL/new_val/box/' + sample
-        txt_file = open('F:/dataset/UNDERALL/new_val/annotations/' + sample[:-4] + '.txt', 'w')
-        try:
-            tree = ET.parse(xml_file)
-            root = tree.getroot()
-            img_name = root.find('frame').text
-            # print(img_name)
-            for object in root.findall('object'):
-                cls = object.find('name').text
-                Xmin = int(object.find('bndbox').find('xmin').text)
-                Ymin = int(object.find('bndbox').find('ymin').text)
-                Xmax = int(object.find('bndbox').find('xmax').text)
-                Ymax = int(object.find('bndbox').find('ymax').text)
-                w = Xmax - Xmin
-                h = Ymax - Ymin
-                if cls == 'echinus' or cls == 'seaurchin':
-                    cls = int(2)
-                    echinus += 1
-                if cls == 'starfish':
-                    cls = int(4)
-                    starfish += 1
-                if cls == 'scallop':
-                    cls = int(3)
-                    scallop += 1
-                if cls == 'holothurian' or cls == 'seacucumber':
-                    cls = int(1)
-                    holothurian += 1
-                if cls == 'waterweeds':
-                    continue
+        xml_file = 'F:/dataset/UNDERALL/split/annotations/2017/' + sample
+        txt_file = open('F:/dataset/UNDERALL/split/annotations/2017_txt/' + sample[:-4] + '.txt', 'w')
 
-                txt_file.write('{},{},{},{},{},{},1,1\n'.format(Xmin, Ymin, w, h, 1, cls))
-                # print('cls:{}, Xmin:{}, Ymin:{}, Xmax:{}, Ymax:{}'.format(cls, Xmin, Ymin, Xmax, Ymax))
-                if cls not in classall:
-                    classall.append(cls)
+        tree = ET.parse(xml_file)
+        root = tree.getroot()
+        img_name = root.find('filename').text
+        # print(img_name)
+        for object in root.findall('object'):
+            cls = object.find('name').text
+            # print(cls)
+            Xmin = int(object.find('bndbox').find('xmin').text)
+            Ymin = int(object.find('bndbox').find('ymin').text)
+            Xmax = int(object.find('bndbox').find('xmax').text)
+            Ymax = int(object.find('bndbox').find('ymax').text)
+            w = Xmax - Xmin
+            h = Ymax - Ymin
+            if cls == 'echinus' or cls == 'seaurchin':
+                cls = int(2)
+                echinus += 1
+            if cls == 'starfish':
+                cls = int(4)
+                starfish += 1
+            if cls == 'scallop':
+                cls = int(3)
+                scallop += 1
+            if cls == 'holothurian' or cls == 'seacucumber':
+                cls = int(1)
+                holothurian += 1
+            if cls == 'waterweeds':
+                continue
+
+            txt_file.write('{},{},{},{},{},{},1,1\n'.format(Xmin, Ymin, w, h, 1, cls))
+            # print('cls:{}, Xmin:{}, Ymin:{}, Xmax:{}, Ymax:{}'.format(cls, Xmin, Ymin, Xmax, Ymax))
+            if cls not in classall:
+                classall.append(cls)
             # a = np.empty([1, 5])
             # b = np.zeros([1, 5])
             # a = np.append(a, b, axis=0)
             # print(a)
             # print(a.shape)
             i += 1
-        except:
-            print(xml_file)
+
 
     print(i)
     print(classall)
@@ -260,15 +260,16 @@ def img2video():
         videoWriter.write(img12)
     videoWriter.release()
 
-def mvfile():
+def mvfile(path):
     i = 0
-    for videoname in os.listdir('F:/dataset/zhangzidao/val/image'):
-        for index in os.listdir('F:/dataset/zhangzidao/val/image/' + videoname):
-            for filename in os.listdir('F:/dataset/zhangzidao/val/image/' + videoname + '/' + index):
-                print('F:/dataset/zhangzidao/val/image/' + videoname + '/' + index + '/' + filename)
-                shutil.copy('F:/dataset/zhangzidao/val/image/' + videoname + '/' + index + '/' + filename,
-                            'F:/dataset/zhangzidaonew/val/images')
-                i += 1
+    for videoname in os.listdir(path):
+        for index in os.listdir(path + videoname):
+            for index2 in os.listdir(path + videoname + '/' + index):
+                for filename in os.listdir(path + videoname + '/' +index +  '/' +index2):
+                    print(path + videoname + '/' + index + '/' +index2 + '/' + filename)
+                    shutil.copy(path + videoname + '/' + index + '/' +index2+ '/' + filename,
+                                'F:/dataset/UNDERALL/split/annotations/images_2017/' + videoname + '_' + filename)
+                    i += 1
     print(i)
 
 
@@ -329,6 +330,32 @@ def YOLOV3newtxt(path):
     return 0
 
 
+def change2017to2019(path):
+    txt2017 = open(path + 'YDXJ0013.txt', 'r')
+    for line in txt2017.readlines():
+        txt2019 = open('F:/dataset/UNDERALL/split/annotations/2017_txt/'+ 'YDXJ0013_' + line.split(' ')[5] + '.txt', 'a')
+        cls = line.strip().split(' ')[9]
+        Xmin = int(line.split(' ')[1])
+        Ymin = int(line.split(' ')[2])
+        Xmax = int(line.split(' ')[3])
+        Ymax = int(line.split(' ')[4])
+        w = Xmax - Xmin
+        h = Ymax - Ymin
+
+        if cls == '"echinus"' or cls == '"seaurchin"':
+            cls = int(2)
+        if cls == '"starfish"':
+            cls = int(4)
+        if cls == '"scallop"':
+            cls = int(3)
+        if cls == '"holothurian"' or cls == '"seacucumber"':
+            cls = int(1)
+        if cls == '"waterweeds"':
+            continue
+        txt2019.write('{},{},{},{},{},{},1,1\n'.format(Xmin, Ymin, w, h, 1, cls))
+
+
+
 if __name__ == '__main__':
     # convert xml to json
 
@@ -338,16 +365,16 @@ if __name__ == '__main__':
     # convert xml to txt
 
     # xml2txt()
-
+    # mvfile('F:/dataset/UNDERALL/split/annotations/2017/')
     # split dataset 0.2/0.8
-
+    change2017to2019('F:/dataset/UNDERALL/split/annotations/')
     # splitdata()
 
     # changeyolov3toRRnet()
 
     # change_cls()
 
-    remove_empty_file('F:/dataset/UNDERALL/2018origin/train_2019/annotations/')
+    # remove_empty_file('F:/dataset/UNDERALL/2018origin/train_2019/annotations/')
     # mmtxtresults2matlab('F:/dataset/UNDERALL/UnderWaterDetection[UPRC2018]/devkit/txtresults/', 'F:/dataset/UNDERALL/UnderWaterDetection[UPRC2018]/devkit/')
 
     # split_repeat('F:/dataset/UNDERALL/train_part1/annotations/', 'F:/dataset/UNDERALL/2018origin/new_val/annotations/')

@@ -23,7 +23,7 @@ def visualize(img, annos, classnames=CLASS_NAMES, with_score=True, xywh=True):
         if not isinstance(anno, torch.Tensor):
             anno = anno.strip().split(',')
         x, y, w, h, score, cls = \
-            int(anno[0]), int(anno[1]), int(anno[2]), int(anno[3]), float(anno[4]), int(anno[5])
+            round(float(anno[0])), round(float(anno[1])), round(float(anno[2])), round(float(anno[3])), float(anno[4]), int(anno[5])
         if xywh:
             cv2.rectangle(img, (x, y), (x + w, y + h), colors[cls], 1)
         else:
@@ -52,15 +52,29 @@ def load_colors(num=12):
 
 
 if __name__ == '__main__':
-    # for name in os.listdir('../../results/'):
-    #     dev_img = cv2.imread('../../data/2018origin/val/images/' + name[:-4] + '.jpg')
-    #     with open('../../results/' + name, 'r') as reader:
+    # for name in os.listdir('F:/dataset/UNDERALL/2018origin/new_val/annotations/'):
+    #     dev_img = cv2.imread('F:/dataset/UNDERALL/2018origin/new_val/images/' + name[:-4] + '.jpg')
+    #     with open('F:/dataset/UNDERALL/2018origin/new_val/annotations/' + name, 'r') as reader:
     #         dev_annos = reader.readlines()
     #     marked_img = visualize(dev_img, dev_annos)
-    #     cv2.imwrite('../../resultsimages/' + name[:-4] + '.jpg', marked_img)
+    #     cv2.imwrite('F:/dataset/UNDERALL/2018origin/val_vis_label/' + name[:-4] + '.jpg', marked_img)
+    # #
+    # # dev_img = cv2.imread('F:/dataset/UNDERALL/split/annotations/images_2017/' + 'YDXJ0003_1058.jpg')
+    # # with open('F:/dataset/UNDERALL/split/annotations/2017_txt/' + 'YDXJ0003_1058.txt', 'r') as reader:
+    # #     dev_annos = reader.readlines()
+    # # marked_img = visualize(dev_img, dev_annos)
+    # # cv2.imwrite('F:/dataset/UNDERALL/split/images/' + 'YDXJ0003_1058.jpg', marked_img)
+    import os
+    import cv2
 
-    dev_img = cv2.imread('F:/dataset/DroneDET/DronesDET2018/test/images/9999939_00000_d_0000158' + '.jpg')
-    with open('F:/models/VisDrone2019/11111/round/' + '9999939_00000_d_0000158.txt', 'r') as reader:
-        dev_annos = reader.readlines()
-    marked_img = visualize(dev_img, dev_annos)
-    cv2.imwrite('F:/dataset/DroneDET/' + '9999939_00000_d_0000158' + '.jpg', marked_img)
+    import numpy as np
+
+    for name in os.listdir('F:/dataset/UNDERALL/2018origin/val_vis_label/'):
+        label = cv2.imread('F:/dataset/UNDERALL/2018origin/val_vis_label/' + name)
+        pred = cv2.imread('F:/dataset/UNDERALL/2018origin/val_vis/' + name)
+
+        pair = np.concatenate((pred, label), axis=1)
+
+        cv2.imshow('1', pair)
+
+        cv2.waitKey(0)

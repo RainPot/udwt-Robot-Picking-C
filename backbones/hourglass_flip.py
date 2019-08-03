@@ -5,9 +5,64 @@ Use lr=0.01 for current version
 """
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
+import numpy as np
 
 __all__ = ['HourglassNet', 'Hourglass']
 
+
+class Downsample(nn.Module):
+    def __init__(self, pad_type='reflect', filt_size=3, stride=2, channels=None, pad_off=0):
+        super(Downsample, self).__init__()
+        self.filt_size = filt_size
+        self.pad_off = pad_off
+        self.pad_sizes = [int(1.*(filt_size-1)/2), int(np.ceil(1.*(filt_size-1)/2)), int(1.*(filt_size-1)/2), int(np.ceil(1.*(filt_size-1)/2))]
+        self.pad_sizes = [pad_size+pad_off for pad_size in self.pad_sizes]
+        self.stride = stride
+        self.off = int((self.stride-1)/2.)
+        self.channels = channels
+
+        # print('Filter size [%i]'%filt_size)
+        if(self.filt_size==1):
+            a = np.array([1.,])
+        elif(self.filt_size==2):
+            a = np.array([1., 1.])
+        elif(self.filt_size==3):
+            a = np.array([1., 2., 1.])
+        elif(self.filt_size==4):
+            a = np.array([1., 3., 3., 1.])
+        elif(self.filt_size==5):
+            a = np.array([1., 4., 6., 4., 1.])
+        elif(self.filt_size==6):
+            a = np.array([1., 5., 10., 10., 5., 1.])
+        elif(self.filt_size==7):
+            a = np.array([1., 6., 15., 20., 15., 6., 1.])
+
+        filt = torch.Tensor(a[:,None]*a[None,:])
+        filt = filt/torch.sum(filt)
+        self.register_buffer('filt', filt[None,None,:,:].repeat((self.channels,1,1,1)))
+
+        self.pad = get_pad_layer(pad_type)(self.pad_sizes)
+
+    def forward(self, inp):
+        if(self.filt_size==1):
+            if(self.pad_off==0):
+                return inp[:,:,::self.stride,::self.stride]
+            else:
+                return self.pad(inp)[:,:,::self.stride,::self.stride]
+        else:
+            return F.conv2d(self.pad(inp), self.filt, stride=self.stride, groups=inp.shape[1])
+
+def get_pad_layer(pad_type):
+    if(pad_type in ['refl','reflect']):
+        PadLayer = nn.ReflectionPad2d
+    elif(pad_type in ['repl','replicate']):
+        PadLayer = nn.ReplicationPad2d
+    elif(pad_type=='zero'):
+        PadLayer = nn.ZeroPad2d
+    else:
+        print('Pad type [%s] not recognized'%pad_type)
+    return PadLayer
 
 class ResidualBlock(nn.Module):
     expansion = 2
@@ -22,7 +77,8 @@ class ResidualBlock(nn.Module):
         self.bn2 = nn.BatchNorm2d(planes)
 
         self.skip_connection = nn.Sequential(
-            nn.Conv2d(inplanes, planes, (1, 1), stride=stride, bias=False),
+            Downsample(filt_size=1, stride=stride, channels=planes),
+            nn.Conv2d(inplanes, planes, (1, 1), stride=1, bias=False),
             nn.BatchNorm2d(planes)
         ) if stride != 1 or inplanes != planes else nn.Sequential()
 
@@ -176,10 +232,6 @@ class HourglassNet(nn.Module):
         ])
         self.relu = nn.ReLU(inplace=True)
 
-        self.avgpool = nn.AdaptiveAvgPool2d(1)
-
-        self.classifier = nn.Linear(256, 5)
-
     def forward(self, x):
         """
         Hourglass forward.
@@ -200,14 +252,44 @@ class HourglassNet(nn.Module):
                 pre_feat = self.relu(pre_feat)
                 pre_feat = self.residual[i](pre_feat)
 
-        result1 = outs[0]
-        result2 = outs[1]
-        result1 = self.avgpool(result1)
-        result2 = self.avgpool(result2)
-        result1, result2 = result1.view(-1, 256), result2.view(-1, 256)
-        result1, result2 = self.classifier(result1), self.classifier(result2)
+        return outs
 
-        return result1, result2
+
+def flip_load(path):
+    pretrained_dict = torch.load(path)
+    new_dict = {}
+
+    for k, v in pretrained_dict.items():
+        a, b = k, v
+        c = a.split('.')
+        if c[-3] == 'skip_connection' and c[-2] == '1':
+            # print(a[-8])
+            c[-2] = '2'
+            a = ''
+            for strr in c:
+                # if strr == '1':
+                #     strr = '2'
+                a = a + strr + '.'
+            a = a[:-1]
+
+            new_dict[a] = b
+            continue
+
+        elif c[-3] == 'skip_connection' and c[-2] == '0':
+            # print(a[-8])
+            c[-2] = '1'
+            a = ''
+            for strr in c:
+                # if strr == '0':
+                #     strr = '1'
+                a = a + strr + '.'
+            a = a[:-1]
+            new_dict[a] = b
+            continue
+
+        new_dict[a] = b
+
+    return new_dict
 
 
 def hourglass_net(num_stacks=2):
@@ -217,26 +299,12 @@ def hourglass_net(num_stacks=2):
     :return: model
     """
     model = HourglassNet(num_stacks=num_stacks)
-    model.load_state_dict(torch.load('./hourglass.pth'), strict=False)
+
+    model_dict = model.state_dict()
+    pretrained_dict = flip_load('./hourglass.pth')
+    pretrained_dict = {k:v for k,v in pretrained_dict.items() if k in model_dict}
+    model_dict.update(pretrained_dict)
+    model.load_state_dict(model_dict)
+
+    # model.load_state_dict(torch.load('./hourglass.pth'), strict=False)
     return model
-
-
-if __name__ == '__main__':
-    net = HourglassNet().cuda()
-    for i in net.state_dict():
-        c = i.split('.')
-        if 'skip_connection' in c:
-            print(i)
-
-
-    for i in net.state_dict():
-        print(i)
-
-    # net.load_state_dict(torch.load('F:/models/hourglass.pth'), strict=False)
-    # pretrained_dict = torch.load('F:/models/hourglass.pth')
-    # for k, v in pretrained_dict.items():
-    #     print(k)
-    # a = torch.randn([1, 3, 256, 256]).cuda()
-    # print(a.size())
-    # b, c = net(a)
-    # print(b.size(), c.size())

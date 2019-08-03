@@ -231,7 +231,7 @@ class RRNetOperator(BaseOperator):
             bbox_for_nms[:, 3] = bbox_for_nms[:, 1] + bbox_for_nms[:, 3]
             keep_bboxs = soft_nms(bbox_for_nms, Nt=0.7, threshold=0.1, method=2)
         keep_bboxs[:, 2:4] -= keep_bboxs[:, 0:2]
-        keep_bboxs = keep_bboxs[keep_bboxs[:, 4]>0.3]
+        keep_bboxs = keep_bboxs[keep_bboxs[:, 4]>0.1]
         return torch.from_numpy(keep_bboxs)
 
     @staticmethod
