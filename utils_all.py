@@ -143,14 +143,14 @@ def xml2txt():
     scallop = 0
     holothurian = 0
     waterweeds = 0
-    for sample in os.listdir('F:/dataset/UNDERALL/split/annotations/2017/'):
+    for sample in os.listdir('F:/dataset/UNDERALL/2019origin/train_data/box/'):
 
-        xml_file = 'F:/dataset/UNDERALL/split/annotations/2017/' + sample
-        txt_file = open('F:/dataset/UNDERALL/split/annotations/2017_txt/' + sample[:-4] + '.txt', 'w')
+        xml_file = 'F:/dataset/UNDERALL/2019origin/train_data/box/' + sample
+        txt_file = open('F:/dataset/UNDERALL/2019origin/train_data/annotations/' + sample[:-4] + '.txt', 'w')
 
         tree = ET.parse(xml_file)
         root = tree.getroot()
-        img_name = root.find('filename').text
+        img_name = root.find('frame').text
         # print(img_name)
         for object in root.findall('object'):
             cls = object.find('name').text
@@ -219,7 +219,7 @@ def remove_empty_file(path):
             print(name)
             F.close()
             os.remove(path + name)
-            os.remove('F:/dataset/UNDERALL/2018origin/train_2019/images/'+name[:-4]+'.jpg')
+            os.remove('F:/dataset/UNDERALL/2019origin/train_data/images/'+name[:-4]+'.jpg')
         # print(name[:-4]+'.txt')
 
 
@@ -367,14 +367,14 @@ if __name__ == '__main__':
     # xml2txt()
     # mvfile('F:/dataset/UNDERALL/split/annotations/2017/')
     # split dataset 0.2/0.8
-    change2017to2019('F:/dataset/UNDERALL/split/annotations/')
+    # change2017to2019('F:/dataset/UNDERALL/split/annotations/')
     # splitdata()
 
     # changeyolov3toRRnet()
 
     # change_cls()
 
-    # remove_empty_file('F:/dataset/UNDERALL/2018origin/train_2019/annotations/')
+    remove_empty_file('F:/dataset/UNDERALL/2019origin/train_data/annotations/')
     # mmtxtresults2matlab('F:/dataset/UNDERALL/UnderWaterDetection[UPRC2018]/devkit/txtresults/', 'F:/dataset/UNDERALL/UnderWaterDetection[UPRC2018]/devkit/')
 
     # split_repeat('F:/dataset/UNDERALL/train_part1/annotations/', 'F:/dataset/UNDERALL/2018origin/new_val/annotations/')

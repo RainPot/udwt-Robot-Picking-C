@@ -60,6 +60,15 @@ class DistributedWrapper(object):
         mp.spawn(self.dist_evaluation_process, nprocs=self.cfg.Distributed.ngpus_per_node,
                  args=(self.cfg.Distributed.ngpus_per_node, self.cfg))
 
+    def deep_sort(self):
+        """
+        Start multiprocessing evaluating.
+        """
+        self.setup_distributed_params()
+        mp.spawn(self.dist_evaluation_process, nprocs=self.cfg.Distributed.ngpus_per_node,
+                 args=(self.cfg.Distributed.ngpus_per_node, self.cfg))
+
+
     def dist_training_process(self, gpu, ngpus_per_node, cfg):
         operator = self.init_operator(gpu, ngpus_per_node, cfg)
         operator.training_process()
@@ -67,3 +76,10 @@ class DistributedWrapper(object):
     def dist_evaluation_process(self, gpu, ngpus_per_node, cfg):
         operator = self.init_operator(gpu, ngpus_per_node, cfg)
         operator.evaluation_process()
+
+    def dist_deepsort_process(self, gpu, ngpus_per_node, cfg):
+        operator = self.init_operator(gpu, ngpus_per_node, cfg)
+        operator.deepsort_process()
+
+
+

@@ -31,6 +31,7 @@ class DronesDET(Dataset):
         name = self.mdf[item]
         img_name = os.path.join(self.images_dir, '{}.jpg'.format(name))
         txt_name = os.path.join(self.annotations_dir, '{}.txt'.format(name))
+        # txt_name = './test.txt'
         # read image
         image = Image.open(img_name).convert("RGB")
 

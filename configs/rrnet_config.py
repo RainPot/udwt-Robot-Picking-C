@@ -7,7 +7,7 @@ from easydict import EasyDict as edict
 Config = edict()
 Config.seed = 219
 Config.dataset = 'drones_det'
-Config.data_root = './data/2018origin'
+Config.data_root = './data/2019origin'
 Config.log_prefix = 'TwoStageNet'
 Config.use_tensorboard = True
 Config.num_classes = 4
@@ -78,7 +78,7 @@ Config.Val.result_dir = './results/'
 Config.Model = edict()
 
 Config.Model.backbone = 'hourglass'
-Config.Model.num_stacks = 2
+Config.Model.num_stacks = 1
 Config.Model.nms_type_for_stage1 = 'nms'  # or 'soft_nms'
 Config.Model.nms_per_class_for_stage1 = True
 

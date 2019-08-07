@@ -267,8 +267,6 @@ def flip_load(path):
             c[-2] = '2'
             a = ''
             for strr in c:
-                # if strr == '1':
-                #     strr = '2'
                 a = a + strr + '.'
             a = a[:-1]
 
@@ -280,8 +278,6 @@ def flip_load(path):
             c[-2] = '1'
             a = ''
             for strr in c:
-                # if strr == '0':
-                #     strr = '1'
                 a = a + strr + '.'
             a = a[:-1]
             new_dict[a] = b

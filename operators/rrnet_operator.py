@@ -15,6 +15,7 @@ from utils.vis.logger import Logger
 from datasets.transforms.functional import denormalize
 from utils.vis.annotations import visualize
 from ext.nms.nms_wrapper import soft_nms
+from ext.nms.nms_wrapper import nms
 from utils.warmup_lr import WarmupMultiStepLR
 from modules.loss.functional import giou_loss
 from PIL import Image
@@ -222,7 +223,8 @@ class RRNetOperator(BaseOperator):
                 bbox_for_nms = pred_bbox[cls_idx].detach().cpu().numpy()
                 bbox_for_nms[:, 2] = bbox_for_nms[:, 0] + bbox_for_nms[:, 2]
                 bbox_for_nms[:, 3] = bbox_for_nms[:, 1] + bbox_for_nms[:, 3]
-                keep_bbox = soft_nms(bbox_for_nms, Nt=0.7, threshold=0.1, method=2)
+                # keep_bbox = soft_nms(bbox_for_nms, Nt=0.7, threshold=0.1, method=2)
+                keep_bbox = nms(bbox_for_nms, thresh=0.3)
                 keep_bboxs.append(keep_bbox)
             keep_bboxs = np.concatenate(keep_bboxs, axis=0)
         else:
@@ -293,3 +295,48 @@ class RRNetOperator(BaseOperator):
                 print("\r[{}/{}]".format(step, all_step), end='', flush=True)
 
             print('=> Evaluation Done!')
+
+
+    def deepsort_process(self):
+        self.model.eval()
+        self.model.module.load_state_dict(torch.load(self.cfg.Val.model_path, map_location='cpu'))
+        step = 0
+        all_step = len(self.validation_loader)
+        with torch.no_grad():
+
+            for data in self.validation_loader:
+                multi_scale_bboxes = []
+                step += 1
+                imgs, annos, names = data
+                imgs = imgs.cuda()
+                img = imgs
+                height, width = img.size()[2], img.size()[3]
+                input_height, input_width = 768, 768
+                h_rate, w_rate = height / input_height, width / input_width
+                img = F.interpolate(img, (input_width, input_height), mode='bilinear', align_corners=True)
+                outs = self.model(img)
+                _, pred_bbox = self.generate_bbox(outs)
+                if not self.cfg.Val.auto_test:
+                    pred_bbox = pred_bbox[pred_bbox[:, 4] > 0.05]
+                pred_bbox = pred_bbox.cpu()
+                pred_bbox[:, 0] = pred_bbox[:, 0] * w_rate + 1
+                pred_bbox[:, 2] = pred_bbox[:, 2] * w_rate + 1
+                pred_bbox[:, 1] = pred_bbox[:, 1] * h_rate + 1
+                pred_bbox[:, 3] = pred_bbox[:, 3] * h_rate + 1
+                multi_scale_bboxes.append(pred_bbox)
+
+
+                pred_bbox = torch.cat(multi_scale_bboxes, dim=0)
+                _, idx = torch.sort(pred_bbox[:, 4], descending=True)
+                pred_bbox = pred_bbox[idx]
+                if not self.cfg.Val.auto_test:
+                    pred_bbox = self._ext_nms(pred_bbox)
+
+                _, idx = torch.sort(pred_bbox[:, 4], descending=True)
+                pred_bbox = pred_bbox[idx]
+
+                print("\r[{}/{}]".format(step, all_step), end='', flush=True)
+
+        return pred_bbox
+
+
