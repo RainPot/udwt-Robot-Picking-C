@@ -111,6 +111,30 @@ def resize(data, scale_factor):
     return img, anno
 
 
+
+class CLAHE:
+    def __init__(self, clip=2, grid=(10, 10)):
+        self.clahe = cv2.createCLAHE(clipLimit=clip, tileGridSize=grid)
+
+    def apply(self, img):
+        lab = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2LAB)
+        lab_planes = cv2.split(lab)
+        lab_planes[0] = self.clahe.apply(lab_planes[0])
+        lab = cv2.merge(lab_planes)
+        cvted_img = Image.fromarray(cv2.cvtColor(lab, cv2.COLOR_LAB2RGB))
+        return cvted_img
+
+def enhancement(data):
+    chahe = CLAHE()
+    img = data[0]
+    anno = data[1]
+    img = chahe.apply(img)
+    return img, anno
+
+
+
+
+
 def get_img_size(data):
     """
     Return the size of the input data.

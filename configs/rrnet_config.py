@@ -38,6 +38,7 @@ Config.Train.std = (0.229, 0.224, 0.225)
 Config.Train.scale_factor = 4
 Config.Train.with_road = True
 Config.Train.transforms = Compose([
+    # Enhancement(),
     MultiScale(scale=(0.8, 0.9, 1, 1.1, 1.2)),
     ToTensor(),
     #MaskIgnore(Config.Train.mean),
@@ -66,8 +67,9 @@ Config.Val.sampler = DistributedSampler
 # Transforms
 Config.Val.mean = (0.485, 0.456, 0.406)
 Config.Val.std = (0.229, 0.224, 0.225)
-Config.Val.scales = [0.8, 0.9, 1, 1.1, 1.2, 1.3]
+Config.Val.scales = [0.8, 0.9, 1, 1.1, 1.2]
 Config.Val.transforms = Compose([
+    # Enhancement(),
     ToTensor(),
     Normalize(Config.Val.mean, Config.Val.std)
 ])
@@ -77,7 +79,7 @@ Config.Val.result_dir = './results/'
 # Model Config ===============================================
 Config.Model = edict()
 
-Config.Model.backbone = 'hourglass'
+Config.Model.backbone = 'dla34'
 Config.Model.num_stacks = 1
 Config.Model.nms_type_for_stage1 = 'nms'  # or 'soft_nms'
 Config.Model.nms_per_class_for_stage1 = True

@@ -26,7 +26,7 @@ class RRNetOperator(BaseOperator):
         self.cfg = cfg
 
         model = RRNet(cfg).cuda(cfg.Distributed.gpu_id)
-        #model = nn.SyncBatchNorm.convert_sync_batchnorm(model)
+        model = nn.SyncBatchNorm.convert_sync_batchnorm(model)
 
         self.optimizer = optim.Adam(model.parameters(), lr=cfg.Train.lr)
 
@@ -233,7 +233,7 @@ class RRNetOperator(BaseOperator):
             bbox_for_nms[:, 3] = bbox_for_nms[:, 1] + bbox_for_nms[:, 3]
             keep_bboxs = soft_nms(bbox_for_nms, Nt=0.7, threshold=0.1, method=2)
         keep_bboxs[:, 2:4] -= keep_bboxs[:, 0:2]
-        keep_bboxs = keep_bboxs[keep_bboxs[:, 4]>0.1]
+        keep_bboxs = keep_bboxs[keep_bboxs[:, 4]>0.15]
         return torch.from_numpy(keep_bboxs)
 
     @staticmethod
@@ -263,7 +263,12 @@ class RRNetOperator(BaseOperator):
                 for scale in self.cfg.Val.scales:
                     img = imgs
                     height, width = img.size()[2], img.size()[3]
-                    input_height, input_width = 768, 768
+                    if height == 1440 and width == 2560:
+                        input_height, input_width = 1408, 1408
+                    elif height == 1536 and width == 2048:
+                        input_height, input_width = 1408, 1408
+                    else:
+                        input_height, input_width = 768, 768
                     h_rate, w_rate = height / input_height, width / input_width
                     img = F.interpolate(img, (input_width, input_height), mode='bilinear', align_corners=True)
                     img = F.interpolate(img, scale_factor=scale, mode='bilinear', align_corners=True)

@@ -39,6 +39,7 @@ class Normalize(object):
         return F.normalize(data[0], self.mean, self.std), data[1]
 
 
+
 class cropsingle(object):
     def __init__(self, size=256, mode='train_2019'):
         self.size = size
@@ -158,6 +159,13 @@ class MultiScale(object):
     def __call__(self, data):
         rand_idx = random.randint(0, len(self.scale) - 1)
         return F.resize(data, self.scale[rand_idx])
+
+class Enhancement(object):
+    def __init__(self):
+        self.par = 1
+
+    def __call__(self, data):
+        return F.enhancement(data)
 
 
 class ToHeatmap(object):

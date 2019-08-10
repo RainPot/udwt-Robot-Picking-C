@@ -3,6 +3,7 @@ from backbones.hourglass import hourglass_net
 from backbones.dense_hourglass import dense_hourglass_net
 from backbones.hrnet import hrnetw48
 from backbones.hrnetv2 import hrnetv2
+from backbones.DLA import dla34
 # from backbones.trident import trident_res50v2, trident_res50v2_deform, trident_res101v2, trident_res101v2_deform
 
 
@@ -29,5 +30,7 @@ def get_backbone(backbone, pretrained=False, num_stacks=2):
         return hrnetw48(pretrained=True)
     elif backbone == 'hrnetv2':
         return hrnetv2(pretrained=True)
+    elif backbone == 'dla34':
+        return dla34(pretrained=True)
     else:
         return resnet50(pretrained=pretrained)

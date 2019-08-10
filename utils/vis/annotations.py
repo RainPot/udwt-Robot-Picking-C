@@ -25,9 +25,9 @@ def visualize(img, annos, classnames=CLASS_NAMES, with_score=True, xywh=True):
         x, y, w, h, score, cls = \
             round(float(anno[0])), round(float(anno[1])), round(float(anno[2])), round(float(anno[3])), float(anno[4]), int(anno[5])
         if xywh:
-            cv2.rectangle(img, (x, y), (x + w, y + h), colors[cls], 1)
+            cv2.rectangle(img, (x, y), (x + w, y + h), colors[cls], 6)
         else:
-            cv2.rectangle(img, (x, y), (w, h), colors[cls], 1)
+            cv2.rectangle(img, (x, y), (w, h), colors[cls], 6)
 
         if with_score:
             cv2.putText(img, "{:.2}".format(score), (x + 2, y + 8), font, 0.3, colors[cls], 1, False)
@@ -52,29 +52,26 @@ def load_colors(num=12):
 
 
 if __name__ == '__main__':
-    # for name in os.listdir('F:/dataset/UNDERALL/2018origin/new_val/annotations/'):
-    #     dev_img = cv2.imread('F:/dataset/UNDERALL/2018origin/new_val/images/' + name[:-4] + '.jpg')
-    #     with open('F:/dataset/UNDERALL/2018origin/new_val/annotations/' + name, 'r') as reader:
-    #         dev_annos = reader.readlines()
-    #     marked_img = visualize(dev_img, dev_annos)
-    #     cv2.imwrite('F:/dataset/UNDERALL/2018origin/val_vis_label/' + name[:-4] + '.jpg', marked_img)
-    # #
-    # # dev_img = cv2.imread('F:/dataset/UNDERALL/split/annotations/images_2017/' + 'YDXJ0003_1058.jpg')
-    # # with open('F:/dataset/UNDERALL/split/annotations/2017_txt/' + 'YDXJ0003_1058.txt', 'r') as reader:
-    # #     dev_annos = reader.readlines()
-    # # marked_img = visualize(dev_img, dev_annos)
-    # # cv2.imwrite('F:/dataset/UNDERALL/split/images/' + 'YDXJ0003_1058.jpg', marked_img)
-    import os
-    import cv2
+    for name in os.listdir('F:/dataset/UNDERALL/2019Anresults/results18/'):
+        dev_img = cv2.imread('F:/dataset/UNDERALL/2019origin/test_data/images/' + name[:-4] + '.jpg')
+        with open('F:/dataset/UNDERALL/2019Anresults/results18/' + name, 'r') as reader:
+            dev_annos = reader.readlines()
+        marked_img = visualize(dev_img, dev_annos)
+        cv2.imwrite('F:/dataset/UNDERALL/2019Anresults/images18/' + name[:-4] + '.jpg', marked_img)
+    #
+    # dev_img = cv2.imread('F:/dataset/UNDERALL/split/annotations/images_2017/' + 'YDXJ0003_1058.jpg')
+    # with open('F:/dataset/UNDERALL/split/annotations/2017_txt/' + 'YDXJ0003_1058.txt', 'r') as reader:
+    #     dev_annos = reader.readlines()
+    # marked_img = visualize(dev_img, dev_annos)
+    # cv2.imwrite('F:/dataset/UNDERALL/split/images/' + 'YDXJ0003_1058.jpg', marked_img)
 
-    import numpy as np
 
-    for name in os.listdir('F:/dataset/UNDERALL/2018origin/val_vis_label/'):
-        label = cv2.imread('F:/dataset/UNDERALL/2018origin/val_vis_label/' + name)
-        pred = cv2.imread('F:/dataset/UNDERALL/2018origin/val_vis/' + name)
-
-        pair = np.concatenate((pred, label), axis=1)
-
-        cv2.imshow('1', pair)
-
-        cv2.waitKey(0)
+    # import os
+    # import cv2
+    # import numpy as np
+    # for name in os.listdir('F:/dataset/UNDERALL/2018origin/val_vis_label/'):
+    #     label = cv2.imread('F:/dataset/UNDERALL/2018origin/val_vis_label/' + name)
+    #     pred = cv2.imread('F:/dataset/UNDERALL/2018origin/val_vis/' + name)
+    #     pair = np.concatenate((pred, label), axis=1)
+    #     cv2.imshow('1', pair)
+    #     cv2.waitKey(0)
