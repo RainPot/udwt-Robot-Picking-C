@@ -377,6 +377,7 @@ def makegtfinal():
 if __name__ == '__main__':
     # convert xml to json
 
+
     convertor = Convertor('F:/dataset/UNDERALL/2019origin/', 'F:/dataset/UNDERALL/2019coco/annotations/')
     convertor.start()
 

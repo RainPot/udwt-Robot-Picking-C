@@ -254,6 +254,8 @@ class RRNetOperator(BaseOperator):
         self.model.module.load_state_dict(state_dict)
         step = 0
         all_step = len(self.validation_loader)
+        import time
+        start = time.time()
         with torch.no_grad():
             for data in self.validation_loader:
                 multi_scale_bboxes = []
@@ -298,8 +300,9 @@ class RRNetOperator(BaseOperator):
                 del outs
                 del pred_bbox
                 print("\r[{}/{}]".format(step, all_step), end='', flush=True)
+        end = time.time()
 
-            print('=> Evaluation Done!')
+        print('=> Evaluation Done! fps={}'.format(float(end - start) / 99))
 
 
     def deepsort_process(self):
