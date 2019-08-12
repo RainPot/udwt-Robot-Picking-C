@@ -15,7 +15,7 @@ class Convertor(object):
         self.source = source
         self.target = target
 
-        self.splits = ['train_2019']
+        self.splits = ['train_data', 'val_data']
         # self.splits = ['train', 'val', 'test']
         if source == 'drones' and target == 'coco':
             self.start = self.under2coco
@@ -40,19 +40,15 @@ class Convertor(object):
                 "images": [],
                 "annotations": [],
                 "categories": [
-                    {
-                        "id": 0,
-                        "name": "ignore",
-                        "supercategory": "",
-                    },
+
                     {
                         "id": 1,
-                        "name": "echinus",
+                        "name": "holothurian",
                         "supercategory": "",
                     },
                     {
                         "id": 2,
-                        "name": "starfish",
+                        "name": "echinus",
                         "supercategory": "",
                     },
                     {
@@ -62,12 +58,7 @@ class Convertor(object):
                     },
                     {
                         "id": 4,
-                        "name": "holothurian",
-                        "supercategory": "",
-                    },
-                    {
-                        "id": 5,
-                        "name": "waterweeds",
+                        "name": "starfish",
                         "supercategory": "",
                     }
                 ]
@@ -386,8 +377,8 @@ def makegtfinal():
 if __name__ == '__main__':
     # convert xml to json
 
-    # convertor = Convertor('F:/dataset/UNDERALL/2018origin/', 'F:/dataset/UNDERALL/2018origin/')
-    # convertor.start()
+    convertor = Convertor('F:/dataset/UNDERALL/2019origin/', 'F:/dataset/UNDERALL/2019coco/annotations/')
+    convertor.start()
 
     # convert xml to txt
 
@@ -407,4 +398,4 @@ if __name__ == '__main__':
     # split_repeat('F:/dataset/UNDERALL/train_part1/annotations/', 'F:/dataset/UNDERALL/2018origin/new_val/annotations/')
     # cpimage('F:/dataset/UNDERALL/2019origin/val_data/annotations/', 'F:/dataset/UNDERALL/2019origin/test_data/images/', 'F:/dataset/UNDERALL/2019origin/val_data/images/')
     # makegtfinal()
-    RRtxtresults2matlab('F:/dataset/UNDERALL/txtresults/results/', 'F:/dataset/UNDERALL/txtresults/')
+    # RRtxtresults2matlab('F:/dataset/UNDERALL/txtresults/results/', 'F:/dataset/UNDERALL/txtresults/')

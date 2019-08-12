@@ -53,7 +53,7 @@ class BasicBlock(nn.Module):
 
         out = self.conv2(out)
         out = self.bn2(out)
-
+        out = F.interpolate(out, size=(residual.size()[2], residual.size()[3]), mode='bilinear', align_corners=True)
         out += residual
         out = self.relu(out)
 
@@ -94,6 +94,7 @@ class Bottleneck(nn.Module):
 
         out = self.conv3(out)
         out = self.bn3(out)
+        out = F.interpolate(out, size=(residual.size()[2], residual.size()[3]), mode='bilinear', align_corners=True)
 
         out += residual
         out = self.relu(out)
@@ -138,6 +139,7 @@ class BottleneckX(nn.Module):
 
         out = self.conv3(out)
         out = self.bn3(out)
+        out = F.interpolate(out, size=(residual.size()[2], residual.size()[3]), mode='bilinear', align_corners=True)
 
         out += residual
         out = self.relu(out)

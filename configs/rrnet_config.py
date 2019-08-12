@@ -79,7 +79,7 @@ Config.Val.result_dir = './results/'
 # Model Config ===============================================
 Config.Model = edict()
 
-Config.Model.backbone = 'dla34'
+Config.Model.backbone = 'hourglass'
 Config.Model.num_stacks = 1
 Config.Model.nms_type_for_stage1 = 'nms'  # or 'soft_nms'
 Config.Model.nms_per_class_for_stage1 = True
